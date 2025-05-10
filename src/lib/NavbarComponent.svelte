@@ -24,10 +24,10 @@
   <!-- <Navbar color="light" light expand="md" container="md"> -->
   <NavbarBrand href="#/">Blindate.com</NavbarBrand>
   <NavbarToggler on:click={() => (isOpen = !isOpen)} />
-  <Collapse {isOpen} navbar expand="sm" on:update={handleUpdate}>
+  <Collapse {isOpen} navbar on:update={handleUpdate}>
     <Nav class="ms-auto" navbar>
       <NavItem>
-        <NavLink href="#/experience" on:click={() => (isOpen = !isOpen)}
+        <NavLink href="#/play" on:click={() => (isOpen = !isOpen)}
           >Experiences</NavLink
         >
       </NavItem>
@@ -37,14 +37,14 @@
         >
       </NavItem>
       <Dropdown nav inNavbar>
-        <DropdownToggle nav caret>Options</DropdownToggle>
+        <DropdownToggle nav caret>More</DropdownToggle>
         <DropdownMenu end>
           <DropdownItem on:click={() => (isOpen = !isOpen)}
-            >Option 1</DropdownItem
+            >Profile</DropdownItem
           >
-          <DropdownItem>Option 2</DropdownItem>
+          <DropdownItem>Settings</DropdownItem>
           <DropdownItem divider />
-          <DropdownItem>Reset</DropdownItem>
+          <DropdownItem>Sign out</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </Nav>

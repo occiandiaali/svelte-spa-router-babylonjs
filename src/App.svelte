@@ -39,6 +39,6 @@
 
 <style>
   main {
-    margin-top: 5%;
+    padding: 2rem;
   }
 </style>

@@ -85,19 +85,28 @@
         </TabPane>
         <TabPane tabId="charlie" tab="Charlie">
           <h2 class="text-content">Charlie</h2>
-          <img
-            alt="Charlie Brown"
-            src="https://upload.wikimedia.org/wikipedia/en/2/22/Charlie_Brown.png"
-          />
+          <div class="pane-div">
+            <img
+              alt="Charlie Brown"
+              src="https://upload.wikimedia.org/wikipedia/en/2/22/Charlie_Brown.png"
+            />
+            <div class="pane-btn-div">
+              <Button
+                color="outline-success"
+                on:click={() => push(`#/experience/${selectedNum}`)}
+                >Go to {selectedNum}</Button
+              >
+            </div>
+          </div>
         </TabPane>
       </TabContent>
     </ModalBody>
     <ModalFooter>
-      <Button
+      <!-- <Button
         color="outline-success"
         on:click={() => push(`#/experience/${selectedNum}`)}
         >Go to {selectedNum}</Button
-      >
+      > -->
       <Button color="secondary" on:click={toggleScrollable}>Cancel</Button>
     </ModalFooter>
   </Modal>
@@ -128,5 +137,15 @@
     color: white;
     cursor: pointer;
     z-index: 7;
+  }
+
+  .pane-btn-div {
+    position: absolute;
+    bottom: 2%;
+    right: 12%;
+  }
+
+  .pane-div {
+    position: relative;
   }
 </style>
