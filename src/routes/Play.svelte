@@ -40,12 +40,12 @@
 </script>
 
 <section>
-  <FormGroup floating label="Choose your experience">
+  <FormGroup floating label="Select your experience">
     <Input
       type="select"
       bind:value={iframeSrc}
       on:change={handleSelectionChange}
-      placeholder="Select a room type"
+      placeholder="Select an experience"
     >
       <option></option>
       <option value="https://coherent-glitter-hornet.glitch.me/"

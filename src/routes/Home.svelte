@@ -10,6 +10,8 @@
     Image,
     TabContent,
     TabPane,
+    FormGroup,
+    Input,
   } from "@sveltestrap/sveltestrap";
   import { push } from "svelte-spa-router";
 
@@ -41,6 +43,8 @@
     selectedNum = theNum;
     selectedImage = theImg;
   };
+  let environSelection = "";
+  const handleEnvironSelection = () => {};
 </script>
 
 <div class="grid">
@@ -64,10 +68,16 @@
         modals. Instead of repeating the text the modal, we use an inline style
         set a minimum height, thereby extending the length of the overall modal
         and demonstrating the overflow scrolling.
-        <Image src={selectedImage} width="350" height="350" />
+        <Image
+          fluid
+          src={selectedImage}
+          width="350"
+          height="350"
+          style="margin-top:12px;border-radius:12px"
+        />
       </p>
-      <p>Choose a date: <input type="date" min="2025-05-10" /></p>
-      <p>Select a location:</p>
+
+      <p>Some of {selectedNum}'s interests</p>
       <TabContent>
         <TabPane tabId="alpha" tab="Alpha" active>
           <h2 class="text-content">Alpha</h2>
@@ -100,6 +110,29 @@
           </div>
         </TabPane>
       </TabContent>
+      <p>Do you like{selectedNum}?</p>
+      <section style="margin-top: 3.5%;">
+        <p>Fix a date: <input type="date" min="2025-05-10" /></p>
+        <FormGroup floating label="Choose your Room experience">
+          <Input
+            type="select"
+            bind:value={environSelection}
+            on:change={handleEnvironSelection}
+            placeholder="Select an environment type"
+          >
+            <option></option>
+            <option value="https://coherent-glitter-hornet.glitch.me/"
+              >Flat land with Boxes</option
+            >
+            <option value="https://playcanv.as/p/c1o59wX5/"
+              >FPS house interior</option
+            >
+            <option value="https://playground.babylonjs.com/full.html#R95W5R#2"
+              >Babylon Plane</option
+            >
+          </Input>
+        </FormGroup>
+      </section>
     </ModalBody>
     <ModalFooter>
       <!-- <Button
