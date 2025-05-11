@@ -33,7 +33,7 @@
       </NavItem>
       <NavItem>
         <NavLink href="https://github.com/sveltestrap/sveltestrap"
-          >GitHub</NavLink
+          >About Us</NavLink
         >
       </NavItem>
       <Dropdown nav inNavbar>

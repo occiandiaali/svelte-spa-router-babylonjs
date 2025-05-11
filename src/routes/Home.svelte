@@ -14,6 +14,8 @@
     Input,
   } from "@sveltestrap/sveltestrap";
   import { push } from "svelte-spa-router";
+  import { myBookingStore } from "../stores/datesList";
+  import { generateRandomString } from "../helpers/randomGenerators";
 
   let openScrollable = false;
   let selectedNum: number;
@@ -43,8 +45,31 @@
     selectedNum = theNum;
     selectedImage = theImg;
   };
+
   let environSelection = "";
-  const handleEnvironSelection = () => {};
+  let bookedDate = "";
+  let room = "";
+
+  const handleDateAndEnvironSelection = () => {
+    if (environSelection !== "" && bookedDate !== "") {
+      room = generateRandomString();
+      myBookingStore.update((currentValues) => [
+        ...currentValues,
+        { roomId: room, url: environSelection, date: bookedDate },
+      ]);
+      environSelection = "";
+      bookedDate = "";
+      room = "";
+    }
+  };
+
+  // const handleEnvironSelection = () => {
+  //   myBookingStore.update((currentItems) => [
+  //     ...currentItems,
+  //     { url: environSelection, date: bookingDate },
+  //   ]);
+  //   environSelection = "";
+  // };
 </script>
 
 <div class="grid">
@@ -112,12 +137,19 @@
       </TabContent>
       <p>Do you like{selectedNum}?</p>
       <section style="margin-top: 3.5%;">
-        <p>Fix a date: <input type="date" min="2025-05-10" /></p>
-        <FormGroup floating label="Choose your Room experience">
+        <p>
+          Fix a date: <input
+            bind:value={bookedDate}
+            type="date"
+            min="2025-05-10"
+            on:change={handleDateAndEnvironSelection}
+          />
+        </p>
+        <FormGroup floating label="Choose a Room experience">
           <Input
             type="select"
             bind:value={environSelection}
-            on:change={handleEnvironSelection}
+            on:change={handleDateAndEnvironSelection}
             placeholder="Select an environment type"
           >
             <option></option>
@@ -127,7 +159,7 @@
             <option value="https://playcanv.as/p/c1o59wX5/"
               >FPS house interior</option
             >
-            <option value="https://playground.babylonjs.com/full.html#R95W5R#2"
+            <option value="https://playground.babylonjs.com/full.html#R95W5R#3"
               >Babylon Plane</option
             >
           </Input>
