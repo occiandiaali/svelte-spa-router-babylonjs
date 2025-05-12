@@ -69,18 +69,6 @@
 
 <section>
   <FormGroup floating label="To start your date">
-    <!-- <Input
-      type="select"
-      bind:value={iframeSrc}
-      on:change={handleSelectionChange}
-      placeholder="Select an experience"
-    >
-      <option></option>
-      <option value="https://coherent-glitter-hornet.glitch.me/"
-        >Glitch Alpha</option
-      >
-      <option value="https://playcanv.as/p/c1o59wX5/">Playcanvas Bravo</option>
-    </Input> -->
     <Input
       type="select"
       on:change={handleSelectionChange}
@@ -93,19 +81,6 @@
         >
       {/each}
     </Input>
-    <!-- <Input
-      type="select"
-      bind:value={iframeSrc}
-      on:change={handleSelectionChange}
-      placeholder="Select an experience"
-    >
-      <option></option>
-      {#each bookings.slice().reverse() as booking}
-        <option value={booking.url}
-          >Room {(thisRoom = booking.roomId)} on {booking.date}</option
-        >
-      {/each}
-    </Input> -->
   </FormGroup>
 </section>
 <section class="iframe-container">
@@ -132,7 +107,7 @@
     </div>
   {:else}
     <div style="margin-top: 10%">
-      <p>Your experience will load here..</p>
+      <p>Your experience will play here..</p>
     </div>
   {/if}
 </section>

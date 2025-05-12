@@ -16,6 +16,7 @@
 
   import { myBookingStore } from "../stores/datesList";
   import { generateRandomString } from "../helpers/randomGenerators";
+  import { snippetSounds } from "../mockData/audio";
 
   let openScrollable = false;
   let selectedNum: number;
@@ -94,19 +95,32 @@
   <Modal isOpen={openScrollable} centered toggle={toggleScrollable} scrollable>
     <ModalHeader toggle={toggleScrollable}>Card no. {selectedNum}</ModalHeader>
     <ModalBody style="text-align:center">
-      <p style="min-height: 500px;">
-        This is some placeholder content to show the scrolling behavior for
-        modals. Instead of repeating the text the modal, we use an inline style
-        set a minimum height, thereby extending the length of the overall modal
-        and demonstrating the overflow scrolling.
-        <Image
-          fluid
-          src={selectedImage}
-          width="350"
-          height="350"
-          style="margin-top:12px;border-radius:12px"
-        />
+      <Image
+        fluid
+        src={selectedImage}
+        width="350"
+        height="350"
+        style="margin-top:12px;margin-bottom:10px;border-radius:12px"
+      />
+      <p style="padding:2px">
+        This is some placeholder content to show the tidbits about {selectedNum}.
+        Instead of repeating the same mistake of meeting without insight, we
+        give you the chance to learn certain things about the person beforehand.
+        Learn what her/his hobbies, voice, likes/dislikes, interests, etc are by
+        scrolling here. Then request a date by selecting a date and environment
+        below.
       </p>
+      <section>
+        <figure>
+          <figcaption>Listen to {selectedNum} speak</figcaption>
+          <!-- <audio :src="item?.voice" controls></audio> -->
+          <audio controls>
+            {#each snippetSounds as snip}
+              <source src={snip.snippet} type="audio/wav" />
+            {/each}
+          </audio>
+        </figure>
+      </section>
 
       <p>Some of {selectedNum}'s interests</p>
       <TabContent>
