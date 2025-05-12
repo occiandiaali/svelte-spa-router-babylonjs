@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     Button,
-    ButtonGroup,
     Modal,
     ModalBody,
     ModalFooter,
@@ -13,7 +12,8 @@
     FormGroup,
     Input,
   } from "@sveltestrap/sveltestrap";
-  import { push } from "svelte-spa-router";
+  //import { push } from "svelte-spa-router";
+
   import { myBookingStore } from "../stores/datesList";
   import { generateRandomString } from "../helpers/randomGenerators";
 
@@ -57,6 +57,11 @@
         ...currentValues,
         { roomId: room, url: environSelection, date: bookedDate },
       ]);
+      toggleScrollable();
+      alert(`
+      Your date has been scheduled for ${bookedDate} in Room ${room}!
+      Check the Experiences page for details & the Join link.
+      `);
       environSelection = "";
       bookedDate = "";
       room = "";
@@ -85,6 +90,7 @@
       </div>
     </div>
   {/each}
+
   <Modal isOpen={openScrollable} centered toggle={toggleScrollable} scrollable>
     <ModalHeader toggle={toggleScrollable}>Card no. {selectedNum}</ModalHeader>
     <ModalBody style="text-align:center">
@@ -125,13 +131,15 @@
               alt="Charlie Brown"
               src="https://upload.wikimedia.org/wikipedia/en/2/22/Charlie_Brown.png"
             />
-            <div class="pane-btn-div">
-              <Button
-                color="outline-success"
-                on:click={() => push(`#/experience/${selectedNum}`)}
-                >Go to {selectedNum}</Button
-              >
-            </div>
+            <!-- <div class="pane-btn-div">
+          
+                <Button
+                  color="outline-success"
+                  on:click={() => push(`#/experience/${selectedNum}`)}
+                  >Go to {selectedNum}</Button
+                >
+        
+            </div> -->
           </div>
         </TabPane>
       </TabContent>
@@ -168,10 +176,11 @@
     </ModalBody>
     <ModalFooter>
       <!-- <Button
-        color="outline-success"
-        on:click={() => push(`#/experience/${selectedNum}`)}
-        >Go to {selectedNum}</Button
-      > -->
+          color="outline-success"
+          on:click={() => push(`#/experience/${selectedNum}`)}
+          >Go to {selectedNum}</Button
+        > -->
+
       <Button color="secondary" on:click={toggleScrollable}>Cancel</Button>
     </ModalFooter>
   </Modal>
@@ -204,11 +213,11 @@
     z-index: 7;
   }
 
-  .pane-btn-div {
+  /* .pane-btn-div {
     position: absolute;
     bottom: 2%;
     right: 12%;
-  }
+  } */
 
   .pane-div {
     position: relative;
