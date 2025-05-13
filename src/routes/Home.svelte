@@ -1,4 +1,5 @@
 <script lang="ts">
+  //import { onMount } from "svelte";
   import {
     Button,
     Modal,
@@ -12,11 +13,18 @@
     FormGroup,
     Input,
   } from "@sveltestrap/sveltestrap";
-  //import { push } from "svelte-spa-router";
+  // import { push } from "svelte-spa-router";
+
+  // import type { AuthSession } from "@supabase/supabase-js";
+  // import { supabase } from "../supabaseClient";
 
   import { myBookingStore } from "../stores/datesList";
   import { generateRandomString } from "../helpers/randomGenerators";
   import { snippetSounds } from "../mockData/audio";
+  // import { onMount } from "svelte";
+
+  // let session: AuthSession;
+  // let userExists = false;
 
   let openScrollable = false;
   let selectedNum: number;

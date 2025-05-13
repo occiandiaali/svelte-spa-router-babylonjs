@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import {
     Collapse,
     NavbarToggler,
@@ -12,17 +13,24 @@
     DropdownMenu,
     DropdownItem,
   } from "@sveltestrap/sveltestrap";
+  import type { AuthSession } from "@supabase/supabase-js";
+  import { supabase } from "../supabaseClient";
 
   let isOpen = false;
+
+  export let session: AuthSession;
 
   function handleUpdate(event: any) {
     isOpen = event.detail.isOpen;
   }
+  onMount(async () => {
+    const { user } = session;
+  });
 </script>
 
 ,<Navbar color="dark" dark container="xl" fixed="top">
   <!-- <Navbar color="light" light expand="md" container="md"> -->
-  <NavbarBrand href="#/" on:click={() => (isOpen = !isOpen)}
+  <NavbarBrand href="#/" on:click={() => (isOpen = false)}
     >Blindate.com</NavbarBrand
   >
   <NavbarToggler on:click={() => (isOpen = !isOpen)} />
@@ -43,7 +51,7 @@
         <DropdownMenu end>
           <DropdownItem
             ><NavLink href="#/profile" on:click={() => (isOpen = !isOpen)}
-              >Profile</NavLink
+              >{session.user.email} Profile</NavLink
             ></DropdownItem
           >
           <DropdownItem
@@ -58,7 +66,9 @@
           >
 
           <DropdownItem divider />
-          <DropdownItem>Sign out</DropdownItem>
+          <DropdownItem on:click={() => supabase.auth.signOut()}
+            >Sign out</DropdownItem
+          >
         </DropdownMenu>
       </Dropdown>
     </Nav>
