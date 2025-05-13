@@ -1,12 +1,21 @@
 <script>
   import { onMount } from "svelte";
-  import { Button, FormGroup, Input, Spinner } from "@sveltestrap/sveltestrap";
+  import {
+    Button,
+    FormGroup,
+    Input,
+    Spinner,
+    Toast,
+    ToastBody,
+    ToastHeader,
+  } from "@sveltestrap/sveltestrap";
   import { myBookingStore } from "../stores/datesList";
 
   let iframeSrc = "";
   let thisRoom = "";
   let iframeOn = false;
   let mockLoading = false;
+  let isOpen = false;
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
@@ -53,9 +62,37 @@
     alert("You are offline!");
   });
 
+  //   function handleScreenSizeChange() {
+  //     if (window.innerWidth < 768) {
+  //       alert("You've switched from desktop!");
+  //     }
+  //   }
+
+  //   function isSmallScreen() {
+  //   const width = window.innerWidth;
+  //   if (width < 768) {
+  //     alert(`
+  //     You'll enjoy this experience better on a desktop/laptop..
+  //     Or, switch your screen to landscape mode..
+  //     `)
+  //     console.log("Small screen detected")
+  //     return true;
+  //   }
+  //   return false;
+  // }
+  function mobileAlert() {
+    const width = window.innerWidth;
+    if (width < 768) {
+      isOpen = true;
+    }
+  }
+
   onMount(() => {
     // Initial check
     if (navigator.onLine) {
+      //  handleScreenSizeChange();
+      // isSmallScreen();
+      mobileAlert();
       console.log("You are online!");
       // Subscribe to store to get current bookings
       myBookingStore.subscribe((value) => {
@@ -83,6 +120,7 @@
     </Input>
   </FormGroup>
 </section>
+
 <section class="iframe-container">
   {#if mockLoading}
     <div style="margin-top: 10%;">
@@ -106,8 +144,21 @@
       <p>room {thisRoom}</p>
     </div>
   {:else}
-    <div style="margin-top: 10%">
+    <div style="margin-top: 10%;">
       <p>Your experience will play here..</p>
+      <Toast
+        {isOpen}
+        autohide
+        delay={10000}
+        on:close={() => (isOpen = false)}
+        style="margin-left:20%"
+      >
+        <ToastHeader>Mobile user notice</ToastHeader>
+        <ToastBody>
+          You will enjoy your experience better on a desktop/laptop. Or, simply
+          switch your screen to landscape mode..
+        </ToastBody>
+      </Toast>
     </div>
   {/if}
 </section>
