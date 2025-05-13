@@ -150,7 +150,7 @@
         <ToastHeader>Mobile user notice</ToastHeader>
         <ToastBody>
           You will enjoy your experience better on a desktop/laptop. Or, simply
-          switch your screen to landscape mode..
+          switch your screen to landscape mode once the experience begins.
         </ToastBody>
       </Toast>
     </div>
