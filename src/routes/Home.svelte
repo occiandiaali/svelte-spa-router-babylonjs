@@ -50,13 +50,19 @@
   let environSelection = "";
   let bookedDate = "";
   let room = "";
+  let timer = 10;
 
   const handleDateAndEnvironSelection = () => {
     if (environSelection !== "" && bookedDate !== "") {
       room = generateRandomString();
       myBookingStore.update((currentValues) => [
         ...currentValues,
-        { roomId: room, url: environSelection, date: bookedDate },
+        {
+          roomId: room,
+          url: environSelection,
+          date: bookedDate,
+          duration: timer,
+        },
       ]);
       toggleScrollable();
       alert(`
@@ -184,6 +190,17 @@
             <option value="https://playground.babylonjs.com/full.html#R95W5R#3"
               >Babylon Plane</option
             >
+          </Input>
+        </FormGroup>
+        <FormGroup floating label="Choose the duration">
+          <Input
+            type="select"
+            bind:value={timer}
+            placeholder="The duration of the date.."
+            ><option></option>
+            <option>15 minutes</option>
+            <option>30 minutes</option>
+            <option>60 minutes</option>
           </Input>
         </FormGroup>
       </section>

@@ -22,7 +22,9 @@
 
 ,<Navbar color="dark" dark container="xl" fixed="top">
   <!-- <Navbar color="light" light expand="md" container="md"> -->
-  <NavbarBrand href="#/">Blindate.com</NavbarBrand>
+  <NavbarBrand href="#/" on:click={() => (isOpen = !isOpen)}
+    >Blindate.com</NavbarBrand
+  >
   <NavbarToggler on:click={() => (isOpen = !isOpen)} />
   <Collapse {isOpen} navbar on:update={handleUpdate}>
     <Nav class="ms-auto" navbar>
@@ -32,17 +34,29 @@
         >
       </NavItem>
       <NavItem>
-        <NavLink href="https://github.com/sveltestrap/sveltestrap"
+        <NavLink href="#/about" on:click={() => (isOpen = !isOpen)}
           >About Us</NavLink
         >
       </NavItem>
       <Dropdown nav inNavbar>
         <DropdownToggle nav caret>More</DropdownToggle>
         <DropdownMenu end>
-          <DropdownItem on:click={() => (isOpen = !isOpen)}
-            >Profile</DropdownItem
+          <DropdownItem
+            ><NavLink href="#/profile" on:click={() => (isOpen = !isOpen)}
+              >Profile</NavLink
+            ></DropdownItem
           >
-          <DropdownItem>Settings</DropdownItem>
+          <DropdownItem
+            ><NavLink href="#/notifications" on:click={() => (isOpen = !isOpen)}
+              >Notifications</NavLink
+            ></DropdownItem
+          >
+          <DropdownItem
+            ><NavLink href="#/settings" on:click={() => (isOpen = !isOpen)}
+              >Settings</NavLink
+            ></DropdownItem
+          >
+
           <DropdownItem divider />
           <DropdownItem>Sign out</DropdownItem>
         </DropdownMenu>
