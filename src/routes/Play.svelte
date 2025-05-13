@@ -146,13 +146,7 @@
   {:else}
     <div style="margin-top: 10%;">
       <p>Your experience will play here..</p>
-      <Toast
-        {isOpen}
-        autohide
-        delay={10000}
-        on:close={() => (isOpen = false)}
-        style="margin-left:20%"
-      >
+      <Toast {isOpen} autohide delay={10000} on:close={() => (isOpen = false)}>
         <ToastHeader>Mobile user notice</ToastHeader>
         <ToastBody>
           You will enjoy your experience better on a desktop/laptop. Or, simply
