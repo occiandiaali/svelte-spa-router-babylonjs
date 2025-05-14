@@ -27,9 +27,11 @@
   // let userExists = false;
 
   let openScrollable = false;
+  let openNested = false;
   let selectedNum: number;
   let selectedImage: string;
   const toggleScrollable = () => (openScrollable = !openScrollable);
+  const toggleNested = () => (openNested = !openNested);
   const thumbnails = [
     "https://picsum.photos/100/100?random=1",
     "https://picsum.photos/100/100?random=2",
@@ -56,30 +58,50 @@
   };
 
   let environSelection = "";
-  let bookedDate = "";
+  let bookedDateTime = "";
   let room = "";
-  let timer = 10;
+  let timer = "";
 
   const handleDateAndEnvironSelection = () => {
-    if (environSelection !== "" && bookedDate !== "") {
+    if (environSelection !== "" && bookedDateTime !== "") {
       room = generateRandomString();
       myBookingStore.update((currentValues) => [
         ...currentValues,
         {
           roomId: room,
           url: environSelection,
-          date: bookedDate,
+          date: bookedDateTime,
           duration: timer,
         },
       ]);
       toggleScrollable();
       alert(`
-      Your date has been scheduled for ${bookedDate} in Room ${room}!
+      Your date has been scheduled for ${bookedDateTime} in Room ${room}!
       Check the Experiences page for details & the Join link.
       `);
       environSelection = "";
-      bookedDate = "";
+      bookedDateTime = "";
       room = "";
+    }
+  };
+
+  const handleSendRequest = () => {
+    if (environSelection !== "" && bookedDateTime !== "" && timer !== "") {
+      room = generateRandomString();
+      let time = "",
+        clock = "",
+        setting = "";
+      time = bookedDateTime;
+      clock = timer;
+      setting = environSelection;
+      toggleNested();
+      alert(
+        `Booked room ${room} in ${setting} environs, for ${clock} on ${time}!`
+      );
+      environSelection = "";
+      bookedDateTime = "";
+      room = "";
+      timer = "";
     }
   };
 
@@ -172,7 +194,7 @@
         </TabPane>
       </TabContent>
       <p>Do you like{selectedNum}?</p>
-      <section style="margin-top: 3.5%;">
+      <!-- <section style="margin-top: 3.5%;">
         <p>
           Fix a date: <input
             bind:value={bookedDate}
@@ -189,6 +211,9 @@
             placeholder="Select an environment type"
           >
             <option></option>
+            <option value="https://babylonjs-typescript-8kt9m6f5.stackblitz.io"
+              >Pink Babylon Blitz plane</option
+            >
             <option value="https://coherent-glitter-hornet.glitch.me/"
               >Flat land with Boxes</option
             >
@@ -211,7 +236,60 @@
             <option>60 minutes</option>
           </Input>
         </FormGroup>
-      </section>
+      </section> -->
+      <Modal isOpen={openNested} backdrop="static">
+        <ModalHeader>Send {selectedNum} a Blindate request</ModalHeader>
+        <ModalBody>
+          <p>
+            Fix a date & time: <input
+              bind:value={bookedDateTime}
+              type="datetime-local"
+              min="2025-05-01T19:30"
+            />
+          </p>
+
+          <FormGroup floating label="Choose a Room experience">
+            <Input
+              type="select"
+              bind:value={environSelection}
+              placeholder="Select an environment type"
+            >
+              <option></option>
+              <option
+                value="https://babylonjs-typescript-8kt9m6f5.stackblitz.io"
+                >Pink Babylon Blitz plane</option
+              >
+              <option value="https://coherent-glitter-hornet.glitch.me/"
+                >Flat land with Boxes</option
+              >
+              <option value="https://playcanv.as/p/c1o59wX5/"
+                >FPS house interior</option
+              >
+              <option
+                value="https://playground.babylonjs.com/full.html#R95W5R#3"
+                >Babylon Plane</option
+              >
+            </Input>
+          </FormGroup>
+          <FormGroup floating label="Choose the duration">
+            <Input
+              type="select"
+              bind:value={timer}
+              placeholder="The duration of the date.."
+              ><option></option>
+              <option>15 minutes</option>
+              <option>30 minutes</option>
+              <option>60 minutes</option>
+            </Input>
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" on:click={handleSendRequest}
+            >Send request</Button
+          >
+          <Button color="secondary" on:click={toggleNested}>Cancel</Button>
+        </ModalFooter>
+      </Modal>
     </ModalBody>
     <ModalFooter>
       <!-- <Button
@@ -219,8 +297,10 @@
           on:click={() => push(`#/experience/${selectedNum}`)}
           >Go to {selectedNum}</Button
         > -->
-
-      <Button color="secondary" on:click={toggleScrollable}>Cancel</Button>
+      <Button color="outline-success" on:click={toggleNested}
+        >Request a Blindate</Button
+      >
+      <Button color="danger" on:click={toggleScrollable}>Cancel</Button>
     </ModalFooter>
   </Modal>
 </div>

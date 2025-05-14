@@ -5,7 +5,7 @@ interface Booking {
     roomId: string;
     url: string;
     date: string;
-    duration: number;
+    duration: string;
 }
 
 // Initialize the store with data from localStorage if available
