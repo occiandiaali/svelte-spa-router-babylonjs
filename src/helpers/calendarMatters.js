@@ -6,3 +6,19 @@ export const getFormattedDate = () => {
   
   return `${month}/${day}/${year}`;
 };
+
+/**
+ * @param {string | number | Date} inputDateTime
+ */
+export function compareDateTimeLocal(inputDateTime) {
+  const currentDateTime = new Date();
+  const inputDateTimeObj = new Date(inputDateTime);
+
+  if (inputDateTimeObj < currentDateTime) {
+    return "before";
+  } else if (inputDateTimeObj > currentDateTime) {
+    return "after";
+  } else {
+    return "same";
+  }
+}

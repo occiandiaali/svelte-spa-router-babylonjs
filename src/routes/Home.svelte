@@ -21,6 +21,7 @@
   import { myBookingStore } from "../stores/datesList";
   import { generateRandomString } from "../helpers/randomGenerators";
   import { snippetSounds } from "../mockData/audio";
+  import { compareDateTimeLocal } from "../helpers/calendarMatters";
   // import { onMount } from "svelte";
 
   // let session: AuthSession;
@@ -82,6 +83,14 @@
       environSelection = "";
       bookedDateTime = "";
       room = "";
+    }
+  };
+
+  const alertValidDateTime = () => {
+    const comparisonResult = compareDateTimeLocal(bookedDateTime);
+    if (comparisonResult === "before") {
+      alert("You can't book a past date & time!");
+      bookedDateTime = "";
     }
   };
 
@@ -243,6 +252,7 @@
           <p>
             Fix a date & time: <input
               bind:value={bookedDateTime}
+              on:change={alertValidDateTime}
               type="datetime-local"
               min="2025-05-01T19:30"
             />
