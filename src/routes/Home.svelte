@@ -1,5 +1,5 @@
 <script lang="ts">
-  //import { onMount } from "svelte";
+  import { onMount } from "svelte";
   import {
     Button,
     Modal,
@@ -16,19 +16,16 @@
   // import { push } from "svelte-spa-router";
 
   // import type { AuthSession } from "@supabase/supabase-js";
-  // import { supabase } from "../supabaseClient";
+  import { supabase } from "../supabaseClient";
 
   import { myBookingStore } from "../stores/datesList";
   import { generateRandomString } from "../helpers/randomGenerators";
   import { snippetSounds } from "../mockData/audio";
   import {
-    convertDateTimeTo12HourFormat,
     convertTo12HourFormat,
-    compareDateTimeLocal,
-    isFutureDate,
     checkDateTime,
   } from "../helpers/calendarMatters";
-  // import { onMount } from "svelte";
+  import type { User } from "@supabase/supabase-js";
 
   // let session: AuthSession;
   // let userExists = false;
@@ -38,6 +35,8 @@
   const currentTime = now.toTimeString().split(" ")[0]; // Format: HH:MM:SS
 
   let aFutureDate = false;
+  let userEmail: string | undefined;
+  let userName: any;
 
   let openScrollable = false;
   let openNested = false;
@@ -168,7 +167,16 @@
   //   ]);
   //   environSelection = "";
   // };
+  onMount(async () => {
+    supabase.auth.getSession().then((e) => {
+      userEmail = e.data.session?.user.email;
+    });
+  });
 </script>
+
+<p style="background-color: orange;padding:6px;border-radius:12px;">
+  Welcome, <b>{userEmail}</b>
+</p>
 
 <div class="grid">
   {#each { length: 15 } as _, i}

@@ -33,7 +33,7 @@
 
       const { data, error, status } = await supabase
         .from("profiles")
-        .select("username, interests, avatar_url")
+        .select("username, email")
         .eq("id", user.id)
         .single();
 
@@ -42,7 +42,7 @@
       if (!data?.username) {
         // username = data.username;
         // avatarUrl = data.avatar_url;
-        alert("Update your profile!");
+        alert("You need to update your profile!");
         push("/profile");
       }
     } catch (error) {

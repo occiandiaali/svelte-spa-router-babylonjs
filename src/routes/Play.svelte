@@ -123,7 +123,7 @@
       {#each bookings as booking}
         <option value={booking.roomId} disabled={today !== booking.date}
           >{booking.date} -- Room {booking.roomId} -- Duration:
-          {booking.duration}</option
+          {booking.duration} -- Starts: {booking.bookedHour}</option
         >
       {/each}
     </Input>
