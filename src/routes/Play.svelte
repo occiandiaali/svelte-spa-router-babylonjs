@@ -19,22 +19,46 @@
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
-  console.log("Date", today);
+
+  const now = new Date();
+  const currentTime = now.toLocaleTimeString();
+
+  /**
+   * @type {string | number}
+   */
+  let todayTime;
+
+  /**
+   * @type {string | number}
+   */
+  let todayDate;
+
+  /**
+   * @type {string}
+   */
+  let render;
 
   /**
    * @type {any[]}
    */
   let bookings = [];
+  //let userResponse = false;
 
   const handleSelectionChange = (
     /** @type {{ target: { value: string; }; }} */ event
   ) => {
     mockLoading = true;
-    const optionId = event.target.value;
+    let optionId = event.target.value;
     const option = bookings.find((o) => o.roomId === optionId);
     console.log(
       `OptionID:${option.roomId} - OptionDate:${option.date} - OptionUrl:${option.url}`
     );
+    // if (option.time > currentTime) {
+    //   userResponse = confirm(`
+    //   Your experience was scheduled for ${option.time}.
+    //   Do you want to start it now, instead?
+    //   `);
+    // }
 
     setTimeout(() => {
       iframeSrc = option.url;
@@ -62,36 +86,20 @@
     alert("You are offline!");
   });
 
-  //   function handleScreenSizeChange() {
-  //     if (window.innerWidth < 768) {
-  //       alert("You've switched from desktop!");
-  //     }
-  //   }
-
-  //   function isSmallScreen() {
-  //   const width = window.innerWidth;
-  //   if (width < 768) {
-  //     alert(`
-  //     You'll enjoy this experience better on a desktop/laptop..
-  //     Or, switch your screen to landscape mode..
-  //     `)
-  //     console.log("Small screen detected")
-  //     return true;
-  //   }
-  //   return false;
-  // }
   function mobileAlert() {
     const width = window.innerWidth;
     if (width < 768) {
       isOpen = true;
     }
   }
+  /**
+   * @type {string}
+   */
+  let formatDate;
 
   onMount(() => {
     // Initial check
     if (navigator.onLine) {
-      //  handleScreenSizeChange();
-      // isSmallScreen();
       mobileAlert();
       console.log("You are online!");
       // Subscribe to store to get current bookings
@@ -114,7 +122,8 @@
       <option value="" disabled>Select an experience</option>
       {#each bookings as booking}
         <option value={booking.roomId} disabled={today !== booking.date}
-          >Room {booking.roomId} on {booking.date}</option
+          >{booking.date} -- Room {booking.roomId} -- Duration:
+          {booking.duration}</option
         >
       {/each}
     </Input>

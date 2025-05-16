@@ -5,6 +5,7 @@ interface Booking {
     roomId: string;
     url: string;
     date: string;
+    bookedHour: string;
     duration: string;
 }
 

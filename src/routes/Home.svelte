@@ -21,11 +21,23 @@
   import { myBookingStore } from "../stores/datesList";
   import { generateRandomString } from "../helpers/randomGenerators";
   import { snippetSounds } from "../mockData/audio";
-  import { compareDateTimeLocal } from "../helpers/calendarMatters";
+  import {
+    convertDateTimeTo12HourFormat,
+    convertTo12HourFormat,
+    compareDateTimeLocal,
+    isFutureDate,
+    checkDateTime,
+  } from "../helpers/calendarMatters";
   // import { onMount } from "svelte";
 
   // let session: AuthSession;
   // let userExists = false;
+
+  const now = new Date();
+  const currentDate = now.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+  const currentTime = now.toTimeString().split(" ")[0]; // Format: HH:MM:SS
+
+  let aFutureDate = false;
 
   let openScrollable = false;
   let openNested = false;
@@ -59,60 +71,91 @@
   };
 
   let environSelection = "";
-  let bookedDateTime = "";
-  let room = "";
+  let bookedDate = "";
+  let bookedTime = "";
   let timer = "";
+  let room = "";
 
-  const handleDateAndEnvironSelection = () => {
-    if (environSelection !== "" && bookedDateTime !== "") {
+  // const handleDateAndEnvironSelection = () => {
+  //   if (environSelection !== "" && bookedDate !== "") {
+  //     room = generateRandomString();
+  //     myBookingStore.update((currentValues) => [
+  //       ...currentValues,
+  //       {
+  //         roomId: room,
+  //         url: environSelection,
+  //         time: bookedTime,
+  //         date: bookedDate,
+  //         duration: timer,
+  //       },
+  //     ]);
+  //     toggleScrollable();
+  //     alert(`
+  //     Your date has been scheduled for ${bookedDate} in Room ${room}!
+  //     Check the Experiences page for details & the Join link.
+  //     `);
+  //     environSelection = "";
+  //     bookedDate = "";
+  //     room = "";
+  //   }
+  // };
+
+  // const alertValidDateTime = () => {
+  //   const comparisonResult = compareDateTimeLocal(bookedDateTime);
+  //   if (comparisonResult === "before") {
+  //     //  alert("You can't book a past date & time!");
+  //     alert(`
+  //         We're not able to time-travel, for now.
+  //         You can't book a past date & time!
+  //     `);
+  //     bookedDateTime = "";
+  //     //  bookedTime = "";
+  //   }
+  // };
+  const alertValidDateTime = () => {
+    const stateOfDate = checkDateTime(bookedDate, bookedTime);
+    if (stateOfDate === "before") {
+      alert(`
+          We're not able to time-travel, for now.
+          You can't book a past date & time!
+      `);
+      bookedDate = "";
+      bookedTime = "";
+    } else if (stateOfDate === "after") {
+      console.log("Future date");
+      aFutureDate = true;
+    }
+  };
+
+  const handleSendRequest = () => {
+    if (
+      environSelection !== "" &&
+      bookedDate !== "" &&
+      bookedTime !== "" &&
+      timer !== ""
+    ) {
       room = generateRandomString();
       myBookingStore.update((currentValues) => [
         ...currentValues,
         {
           roomId: room,
           url: environSelection,
-          date: bookedDateTime,
+          date: bookedDate,
+          bookedHour: convertTo12HourFormat(bookedTime),
           duration: timer,
         },
       ]);
-      toggleScrollable();
-      alert(`
-      Your date has been scheduled for ${bookedDateTime} in Room ${room}!
-      Check the Experiences page for details & the Join link.
-      `);
-      environSelection = "";
-      bookedDateTime = "";
-      room = "";
-    }
-  };
 
-  const alertValidDateTime = () => {
-    const comparisonResult = compareDateTimeLocal(bookedDateTime);
-    if (comparisonResult === "before") {
-      //  alert("You can't book a past date & time!");
-      alert(`
-          We're not able to time-travel, for now. 
-          You can't book a past date & time!
-      `);
-      bookedDateTime = "";
-    }
-  };
-
-  const handleSendRequest = () => {
-    if (environSelection !== "" && bookedDateTime !== "" && timer !== "") {
-      room = generateRandomString();
-      let time = "",
-        clock = "",
-        setting = "";
-      time = bookedDateTime;
-      clock = timer;
-      setting = environSelection;
       toggleNested();
-      alert(
-        `Booked room ${room} in ${setting} environs, for ${clock} on ${time}!`
-      );
+
+      alert(`
+      Your ${timer} date has been scheduled for ${bookedDate}. 
+      Room ID: ${room}.
+      Go to the Experiences page for details & the Join link.
+      `);
       environSelection = "";
-      bookedDateTime = "";
+      bookedDate = "";
+      bookedTime = "";
       room = "";
       timer = "";
     }
@@ -255,11 +298,20 @@
         <ModalHeader>Send {selectedNum} a Blindate request</ModalHeader>
         <ModalBody>
           <p>
-            Fix a date & time: <input
-              bind:value={bookedDateTime}
+            Fix a date: <input
+              bind:value={bookedDate}
               on:change={alertValidDateTime}
-              type="datetime-local"
-              min="2025-05-01T19:30"
+              type="date"
+              min="2025-05-01"
+              required
+            />
+          </p>
+          <p>
+            Pick a time: <input
+              bind:value={bookedTime}
+              type="time"
+              on:change={alertValidDateTime}
+              required
             />
           </p>
 
@@ -302,8 +354,10 @@
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" on:click={handleSendRequest}
-            >Send request</Button
+          <Button
+            disabled={!timer && !environSelection && !bookedDate && !bookedTime}
+            color="primary"
+            on:click={handleSendRequest}>Send request</Button
           >
           <Button color="secondary" on:click={toggleNested}>Cancel</Button>
         </ModalFooter>
