@@ -89,7 +89,11 @@
   const alertValidDateTime = () => {
     const comparisonResult = compareDateTimeLocal(bookedDateTime);
     if (comparisonResult === "before") {
-      alert("You can't book a past date & time!");
+      //  alert("You can't book a past date & time!");
+      alert(`
+          We're not able to time-travel, for now. 
+          You can't book a past date & time!
+      `);
       bookedDateTime = "";
     }
   };
@@ -246,6 +250,7 @@
           </Input>
         </FormGroup>
       </section> -->
+
       <Modal isOpen={openNested} backdrop="static">
         <ModalHeader>Send {selectedNum} a Blindate request</ModalHeader>
         <ModalBody>
@@ -262,23 +267,26 @@
             <Input
               type="select"
               bind:value={environSelection}
-              placeholder="Select an environment type"
+              placeholder="Select a scenario"
             >
               <option></option>
-              <option
+              <!-- <option
                 value="https://babylonjs-typescript-8kt9m6f5.stackblitz.io"
                 >Pink Babylon Blitz plane</option
-              >
+              > -->
               <option value="https://coherent-glitter-hornet.glitch.me/"
-                >Flat land with Boxes</option
+                >3js on Glitch</option
               >
               <option value="https://playcanv.as/p/c1o59wX5/"
                 >FPS house interior</option
               >
-              <option
+              <option value="https://delicious-flowery-specialist.glitch.me/"
+                >Babylon on Glitch</option
+              >
+              <!-- <option
                 value="https://playground.babylonjs.com/full.html#R95W5R#3"
                 >Babylon Plane</option
-              >
+              > -->
             </Input>
           </FormGroup>
           <FormGroup floating label="Choose the duration">
