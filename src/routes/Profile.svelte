@@ -14,6 +14,8 @@
   let bookings = [];
   let avatarUrl: string | null = null;
 
+  let userId: string | null = null;
+
   const getProfile = async () => {
     try {
       loading = true;
@@ -52,13 +54,28 @@
     }
   };
 
+  // Get the authenticated user's ID
+  const getUserId = async () => {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error) {
+      console.error("Error fetching user:", error.message);
+      return null;
+    }
+
+    return user?.id; // Returns the user ID if available
+  };
+
   const updateProfile = async () => {
     try {
       loading = true;
       //   const { user } = session || null;
 
       const updates = {
-        id: "6a6dc7c5-baa7-4da4-ac89-0b4b66f77f09", //user.id,
+        id: userId, //"6a6dc7c5-baa7-4da4-ac89-0b4b66f77f09", //user.id,
         username,
         full_name,
         // details,
@@ -87,6 +104,13 @@
   };
 
   onMount(() => {
+    getUserId().then((u) => {
+      if (u) {
+        userId = u;
+      } else {
+        console.log(`${u} looks undefined!`);
+      }
+    });
     getProfile();
     // supabase.auth.getSession().then((s) => {
     //   console.log(`Session: ${JSON.stringify(s.data.session?.user.email)}`);
