@@ -174,8 +174,8 @@
   }
   #room {
     position: absolute;
-    top: 8%;
-    right: 8%;
+    top: 10%;
+    right: 5%;
   }
   #room > p {
     color: white;
