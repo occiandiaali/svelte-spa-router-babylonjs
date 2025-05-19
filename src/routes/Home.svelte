@@ -8,12 +8,14 @@
     ModalHeader,
     Icon,
     Image,
+    Spinner,
     TabContent,
     TabPane,
+    Tooltip,
     FormGroup,
     Input,
   } from "@sveltestrap/sveltestrap";
-  // import { push } from "svelte-spa-router";
+  import { push } from "svelte-spa-router";
 
   // import type { AuthSession } from "@supabase/supabase-js";
   import { supabase } from "../supabaseClient";
@@ -25,14 +27,17 @@
     convertTo12HourFormat,
     checkDateTime,
   } from "../helpers/calendarMatters";
-  import type { User } from "@supabase/supabase-js";
+  import {
+    bookedRoomUrl,
+    bookedRoomID,
+    bookedDateDuration,
+    bookingInfo,
+  } from "../stores/roomInfoStore";
+  import RoomModalComponent from "../lib/RoomModalComponent.svelte";
 
-  // let session: AuthSession;
-  // let userExists = false;
-
-  const now = new Date();
-  const currentDate = now.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-  const currentTime = now.toTimeString().split(" ")[0]; // Format: HH:MM:SS
+  // const now = new Date();
+  // const currentDate = now.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+  // const currentTime = now.toTimeString().split(" ")[0]; // Format: HH:MM:SS
 
   let aFutureDate = false;
   let userEmail: string | undefined;
@@ -62,6 +67,32 @@
     "https://picsum.photos/100/100?random=15",
     "https://picsum.photos/100/100?random=16",
   ];
+
+  let roomModalOpen = false;
+  let roomModalID = "";
+  let fullScreen: boolean;
+
+  function clearBookedRoomAndDuration() {
+    bookedRoomUrl.set("");
+    bookedRoomID.set("");
+    bookedDateDuration.set("");
+    localStorage.removeItem("bookedRoom");
+    localStorage.removeItem("bookedRoomID");
+    localStorage.removeItem("bookedDateDuration");
+    push("/settings");
+  }
+
+  const roomModalToggle = () => {
+    toggleScrollable();
+    fullScreen = true;
+    roomModalOpen = !roomModalOpen;
+  };
+
+  const handleNewModalSelection = (identity: string) => {
+    roomModalID = `user_${identity}_${generateRandomString()}`;
+    bookingInfo.set([$bookedRoomUrl, $bookedDateDuration, $bookedRoomID]);
+    roomModalToggle();
+  };
 
   const handleSelection = (theNum: number, theImg: string) => {
     toggleScrollable();
@@ -183,6 +214,12 @@
   //   ]);
   //   environSelection = "";
   // };
+  // function mobileAlert() {
+  //   const width = window.innerWidth;
+  //   if (width < 768) {
+  //     toastOpen = true;
+  //   }
+  // }
   async function getUserId() {
     const { data: userData, error } = await supabase.auth.getUser();
     if (error) {
@@ -206,9 +243,18 @@
   Welcome, <b>{userEmail || "loading.."}</b>
 </p>
 
+<p>Currently online</p>
 <div class="grid">
   {#each { length: 15 } as _, i}
     <div class="card">
+      <div id="online-div">
+        <Spinner
+          id="online-spinner"
+          type="grow"
+          color={i % 2 !== 0 ? "danger" : "warning-emphasis"}
+        />
+      </div>
+
       <Image data-bs-theme="dark" alt="" src={thumbnails[i + 1]} />
       {i + 1}
       <div id="eye">
@@ -219,6 +265,14 @@
       </div>
     </div>
   {/each}
+
+  <RoomModalComponent
+    open={roomModalOpen}
+    onClose={clearBookedRoomAndDuration}
+    roomModalId={roomModalID}
+    toggle={roomModalToggle}
+    fullscreen={fullScreen}
+  />
 
   <Modal isOpen={openScrollable} centered toggle={toggleScrollable} scrollable>
     <ModalHeader toggle={toggleScrollable}>Card no. {selectedNum}</ModalHeader>
@@ -286,6 +340,47 @@
         </TabPane>
       </TabContent>
       <p>Do you like{selectedNum}?</p>
+      <h3>Ask {selectedNum} out!</h3>
+      <section style="margin-top: 3.5%;border:1px solid orange;padding:1rem">
+        <FormGroup floating label="Choose a Room experience">
+          <Input
+            type="select"
+            bind:value={$bookedRoomUrl}
+            placeholder="Select an environment type"
+          >
+            <option></option>
+            <!-- <option value="https://babylonjs-typescript-8kt9m6f5.stackblitz.io"
+              >Pink Babylon Blitz plane</option
+            > -->
+            <option value="https://delicious-flowery-specialist.glitch.me/"
+              >AI Experience</option
+            >
+            <option value="https://coherent-glitter-hornet.glitch.me/"
+              >Flat land with Boxes</option
+            >
+            <option value="https://playcanv.as/p/c1o59wX5/"
+              >FPS house interior</option
+            >
+            <!-- <option value="https://playground.babylonjs.com/full.html#R95W5R#3"
+              >Babylon Plane</option
+            > -->
+            <option value="https://sweet-fork-pillow.glitch.me/"
+              >Bare scene</option
+            >
+          </Input>
+        </FormGroup>
+        <FormGroup floating label="Choose the duration">
+          <Input
+            type="select"
+            bind:value={$bookedDateDuration}
+            placeholder="The duration of the date.."
+            ><option></option>
+            <option value="10">10 minutes</option>
+            <option value="15">15 minutes</option>
+            <option value="20">20 minutes</option>
+          </Input>
+        </FormGroup>
+      </section>
       <!-- <section style="margin-top: 3.5%;">
         <p>
           Fix a date: <input
@@ -395,6 +490,7 @@
             color="primary"
             on:click={handleSendRequest}>Send request</Button
           >
+
           <Button color="secondary" on:click={toggleNested}>Cancel</Button>
         </ModalFooter>
       </Modal>
@@ -405,10 +501,16 @@
           on:click={() => push(`#/experience/${selectedNum}`)}
           >Go to {selectedNum}</Button
         > -->
-      <Button color="outline-success" on:click={toggleNested}
+      <!-- <Button color="outline-success" on:click={toggleNested}
         >Request a Blindate</Button
+      > -->
+      <Button
+        on:click={() => handleNewModalSelection(selectedNum.toString())}
+        color="outline-info">Request a date</Button
       >
-      <Button color="danger" on:click={toggleScrollable}>Cancel</Button>
+      <Button color="danger" on:click={clearBookedRoomAndDuration}
+        >Cancel</Button
+      >
     </ModalFooter>
   </Modal>
 </div>
@@ -438,6 +540,11 @@
     color: white;
     cursor: pointer;
     z-index: 7;
+  }
+  #online-div {
+    position: absolute;
+    top: 4%;
+    left: 5%;
   }
 
   /* .pane-btn-div {

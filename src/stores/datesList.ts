@@ -1,4 +1,3 @@
-// src/stores.js
 import { writable } from 'svelte/store';
 
 interface Booking {
