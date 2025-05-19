@@ -9,13 +9,15 @@
     ToastBody,
     ToastHeader,
   } from "@sveltestrap/sveltestrap";
-  import { myBookingStore } from "../stores/datesList";
+  import { myBookingStore, thisUserID } from "../stores/datesList";
+  import { supabase } from "../supabaseClient";
 
   let iframeSrc = "";
   let thisRoom = "";
   let iframeOn = false;
   let mockLoading = false;
   let isOpen = false;
+  let bookingsLoading = false;
 
   // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split("T")[0];
@@ -49,9 +51,9 @@
   ) => {
     mockLoading = true;
     let optionId = event.target.value;
-    const option = bookings.find((o) => o.roomId === optionId);
+    const option = bookings.find((o) => o.room_id === optionId);
     console.log(
-      `OptionID:${option.roomId} - OptionDate:${option.date} - OptionUrl:${option.url}`
+      `OptionID:${option.room_id} - OptionDate:${option.meeting_date} - OptionUrl:${option.url}`
     );
     // if (option.time > currentTime) {
     //   userResponse = confirm(`
@@ -97,15 +99,57 @@
    */
   let formatDate;
 
-  onMount(() => {
+  async function getUserId() {
+    const { data: userData, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error("Error fetching user: ", error);
+      return null;
+    }
+    console.log(`userdata id: ${userData?.user.id}`);
+    //  userID = userData?.user.id;
+
+    return userData?.user.id;
+  }
+  /**
+   * @param {any} userid
+   */
+  async function getUserBookings(userid) {
+    const { data, error: fetchError } = await supabase
+      .from("bookings") // Replace with your table name
+      .select("*")
+      .eq("user_id", userid); // Adjust the query as needed
+    if (fetchError) {
+      console.error(`Fetch error ${JSON.stringify(fetchError.message)}`);
+    } else {
+      return data;
+    }
+  }
+
+  onMount(async () => {
     // Initial check
     if (navigator.onLine) {
       mobileAlert();
       console.log("You are online!");
       // Subscribe to store to get current bookings
-      myBookingStore.subscribe((value) => {
-        bookings = value;
-      });
+      // myBookingStore.subscribe((value) => {
+      //   bookings = value;
+      // });
+      try {
+        bookingsLoading = true;
+        getUserId().then((u) => {
+          getUserBookings(u).then((d) => {
+            bookings = d || [];
+            bookingsLoading = false;
+          });
+        });
+
+        //  if (fetchError) throw fetchError;
+        // if (fetchError)
+        //   console.error(`Fetch error ${JSON.stringify(fetchError.message)}`);
+
+        // bookings.push(data);
+        // console.log(`Data: ${data}`);
+      } catch (err) {}
     } else {
       alert("It looks like you're offline!");
     }
@@ -117,14 +161,25 @@
     <Input
       type="select"
       on:change={handleSelectionChange}
-      placeholder="Select an experience"
+      placeholder="Looking for experiences to load..."
     >
       <option value="" disabled>Select an experience</option>
       {#each bookings as booking}
-        <option value={booking.roomId} disabled={today !== booking.date}
+        <!-- <option value={booking.roomId} disabled={today !== booking.date}
           >{booking.date} -- Room {booking.roomId} -- Duration:
           {booking.duration} -- Starts: {booking.bookedHour}</option
-        >
+        > -->
+
+        {#if bookingsLoading}
+          <option value="">Bookings loading..</option>
+        {:else}
+          <option
+            value={booking.room_id}
+            disabled={today !== booking.meeting_date}
+            >Room {booking.room_id || "loading"} on {booking.meeting_date} for {booking.meeting_duration}
+            - From:{booking.meeting_time}</option
+          >
+        {/if}
       {/each}
     </Input>
   </FormGroup>

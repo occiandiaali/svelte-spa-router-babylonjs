@@ -18,7 +18,7 @@
   // import type { AuthSession } from "@supabase/supabase-js";
   import { supabase } from "../supabaseClient";
 
-  import { myBookingStore } from "../stores/datesList";
+  import { myBookingStore, thisUserID } from "../stores/datesList";
   import { generateRandomString } from "../helpers/randomGenerators";
   import { snippetSounds } from "../mockData/audio";
   import {
@@ -36,7 +36,7 @@
 
   let aFutureDate = false;
   let userEmail: string | undefined;
-  let userName: any;
+  let userID: any;
 
   let openScrollable = false;
   let openNested = false;
@@ -126,7 +126,7 @@
     }
   };
 
-  const handleSendRequest = () => {
+  const handleSendRequest = async () => {
     if (
       environSelection !== "" &&
       bookedDate !== "" &&
@@ -144,6 +144,22 @@
           duration: timer,
         },
       ]);
+
+      const { data, error } = await supabase.from("bookings").insert([
+        {
+          user_id: userID,
+          meeting_duration: timer,
+          meeting_date: bookedDate,
+          meeting_time: convertTo12HourFormat(bookedTime),
+          room_id: room,
+        },
+      ]);
+      if (error) {
+        console.error("Error creating booking:", error);
+      } else {
+        console.log("Booking saved successfully:", data);
+        //  alert(`Request made: ${data}`);
+      }
 
       toggleNested();
 
@@ -167,15 +183,27 @@
   //   ]);
   //   environSelection = "";
   // };
+  async function getUserId() {
+    const { data: userData, error } = await supabase.auth.getUser();
+    if (error) {
+      console.error("Error fetching user: ", error);
+      return null;
+    }
+    return userData?.user.id;
+  }
   onMount(async () => {
     supabase.auth.getSession().then((e) => {
       userEmail = e.data.session?.user.email;
     });
   });
+  getUserId().then((id) => {
+    userID = id;
+    thisUserID.set(userID);
+  });
 </script>
 
 <p style="background-color: orange;padding:6px;border-radius:12px;">
-  Welcome, <b>{userEmail}</b>
+  Welcome, <b>{userEmail || "loading.."}</b>
 </p>
 
 <div class="grid">
